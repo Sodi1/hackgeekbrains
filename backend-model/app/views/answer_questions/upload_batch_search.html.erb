@@ -1,0 +1,20 @@
+<div class="w-full">
+  <form action="<%=batch_search_answer_questions_path %>" method="post" enctype="multipart/form-data" class="flex items-center p-4 bg-white rounded-lg">
+    <label for="file_upload">Выбери файл:</label>
+    <input type="file" id="file_upload" name="file_upload">
+    <input type="submit" value="Загрузить">
+  </form>
+  <div>
+    <ol>
+      <% @submits.each do |submit| %>
+        <li>
+          <%=link_to submit.created_at, submit_path(submit)  %>
+        </li>
+      <%end %>
+    </ol>
+  </div>
+</div>
+</br>
+
+
+

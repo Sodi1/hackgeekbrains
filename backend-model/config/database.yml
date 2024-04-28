@@ -1,0 +1,23 @@
+default: &default
+  adapter: postgresql
+  encoding: unicode
+  pool: <%= ENV.fetch("RAILS_MAX_THREADS") { 5 } %>
+  username: copilot
+  password: copilot
+  host: localhost
+  port: 5436
+development:
+  <<: *default
+  database: copilot
+
+test:
+  <<: *default
+  database: museums_test
+
+production:
+  adapter: <%= ENV['DB_ADAPTER'] ||= 'postgresql' %>
+  database: <%= ENV['DB_NAME'] %>
+  username: <%= ENV['DB_USERNAME'] %>
+  password: <%= ENV['DB_PASSWORD'] %>
+  host: <%= ENV['DB_HOST'] %>
+  pool: 10

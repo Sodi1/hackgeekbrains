@@ -1,0 +1,54 @@
+version: '3.4'
+x-rails-common-settings: &rails-common-settings
+  image: vchekryzhov/copilot-back:latest
+  environment:
+    RAILS_MASTER_KEY: 87c7603cd847daf5da83b8b000bd8604
+    DB_NAME: copilot
+    DB_USERNAME: copilot
+    DB_PASSWORD: copilot
+    DB_HOST: vector-postgres
+    ENCODER_URL: encoder:5000
+    REDIS_URL: redis://redis:6379/1
+    MALLOC_ARENA_MAX: 2
+    WEB_CONCURRENCY: 0
+  depends_on:
+    - vector-postgres
+    - encoder
+    - redis
+services:
+  rails:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    <<: *rails-common-settings
+    ports:
+      - "3035:3000"
+  good_job:
+    <<: *rails-common-settings
+    command: [ 'bundle', 'exec', 'good_job', 'start' ]
+  vector-postgres:
+    image: pgvector/pgvector:pg16
+    environment:
+      POSTGRES_USER: copilot
+      POSTGRES_PASSWORD: copilot
+      POSTGRES_DB: copilot
+    volumes:
+      - pg_vector_data:/var/lib/postgresql/data
+    ports:
+      - "5436:5432"
+  encoder:
+    image: vchekryzhov/encoder
+    environment:
+      MODEL_NAME: BAAI/bge-m3
+#    volumes:
+#      - models:/usr/src/app/models
+    ports:
+      - "5002:5000"
+  redis:
+    image: redis:latest
+    volumes:
+      - redis_data:/var/lib/redis/data
+volumes:
+  pg_vector_data:
+  models:
+  redis_data:
